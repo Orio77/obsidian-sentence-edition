@@ -1,0 +1,185 @@
+/* Blur the background when our modal is open */
+.sentence-edition-blur-active .view-content {
+	filter: blur(5px);
+	transition: filter 0.3s ease;
+}
+
+/* Modal Styling */
+/* Modal Container */
+.sentence-editor-modal-container {
+	width: 95vw;
+	max-width: 600px; /* Mobile max */
+	height: 85vh; /* More height for stacked content */
+	display: flex;
+	flex-direction: column;
+}
+
+.sentence-editor-modal-container .modal-content {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 15px;
+	overflow: hidden;
+}
+
+/* Layout Wrapper */
+.sentence-editor-layout {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	overflow: hidden;
+	gap: 15px;
+}
+
+/* Comparison Wrapper: Contains Editor and Reference */
+.sentence-editor-comparison-wrapper {
+	display: flex;
+	flex-direction: column; /* Mobile: Stacked */
+	gap: 15px;
+	flex: 2; /* Take up most space */
+	overflow: hidden;
+}
+
+/* 1. Text Editor */
+.sentence-editor-text-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.sentence-editor-text-container h4,
+.sentence-editor-reference-container h4 {
+	margin: 0 0 5px 0;
+	font-size: 0.9em;
+	color: var(--text-muted);
+}
+
+.sentence-editor-text-container textarea {
+	flex: 1;
+	font-family: var(--font-text);
+	font-size: 1.2em; /* Base size */
+	line-height: 1.5;
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid var(--background-modifier-border);
+	resize: none;
+}
+
+/* 2. Reference View */
+.sentence-editor-reference-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.sentence-editor-reference-text {
+	flex: 1;
+	padding: 10px;
+	font-size: 1.2em; /* Match base size */
+	border-radius: 8px;
+	border: 1px solid var(--background-modifier-border);
+	background-color: var(--background-secondary); /* Distinguish from editor */
+	overflow-y: auto;
+	white-space: pre-wrap;
+}
+
+/* 3. Versions List */
+.sentence-editor-versions {
+	flex: 0 0 auto; /* Allow shrinking/growing based on content, but default to compact */
+	max-height: 150px; /* Limit height */
+	overflow-y: auto;
+	border-top: 1px solid var(--background-modifier-border);
+	padding-top: 10px;
+}
+
+/* Desktop / Large Screen Layout */
+@media (min-width: 800px) {
+	/* Increased breakpoint for better side-by-side */
+	.sentence-editor-modal-container {
+		width: 90vw;
+		max-width: 1200px;
+		height: 80vh;
+	}
+
+	.sentence-editor-comparison-wrapper {
+		flex-direction: row; /* Side-by-side */
+	}
+
+	.sentence-editor-text-container {
+		flex: 1;
+	}
+
+	.sentence-editor-text-container textarea {
+		font-size: 1.5em; /* Larger on desktop */
+	}
+
+	.sentence-editor-reference-container {
+		flex: 1;
+	}
+
+	.sentence-editor-reference-text {
+		font-size: 1.5em; /* Match larger on desktop */
+	}
+}
+
+.sentence-version-item {
+	padding: 8px;
+	border-bottom: 1px solid var(--background-modifier-border);
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+.sentence-version-item:hover {
+	opacity: 1;
+	background-color: var(--background-secondary);
+}
+
+.sentence-editor-buttons {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+	flex-shrink: 0; /* Don't shrink buttons */
+}
+
+/* Swipe Indicators */
+.swipe-indicator {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2em;
+	font-weight: bold;
+	color: var(--text-on-accent);
+	background: var(--interactive-accent);
+	opacity: 0;
+	pointer-events: none; /* Let clicks pass through */
+	z-index: 1000;
+	transition: opacity 0.1s ease-out;
+}
+
+.swipe-indicator.left {
+	left: 0;
+	background: linear-gradient(
+		to right,
+		rgba(var(--interactive-accent-rgb), 0.5),
+		transparent
+	);
+	justify-content: flex-start;
+	padding-left: 20px;
+}
+
+.swipe-indicator.right {
+	right: 0;
+	background: linear-gradient(
+		to left,
+		rgba(var(--interactive-accent-rgb), 0.5),
+		transparent
+	);
+	justify-content: flex-end;
+	padding-right: 20px;
+}

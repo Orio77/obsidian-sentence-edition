@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+main.js
+styles.css.map
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.idea/
+.vscode/

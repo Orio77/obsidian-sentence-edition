@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-sentence-edition",
+	"name": "Sentence Edition",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Focus on editing one sentence at a time with versioning.",
+	"author": "Antigravity",
+	"authorUrl": "https://github.com/antigravity",
+	"isDesktopOnly": false
+}
