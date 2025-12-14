@@ -63,8 +63,8 @@ export class SentenceManager {
 		// Check if there's a version comment at the start and skip it
 		// This handles the case where the cursor is in a sentence that follows
 		// another sentence with a version comment
-		// Use [^%]* to match content without %, preventing matching across multiple comments
-		const versionCommentMatch = rawText.match(/^%% versions: [^%]*%%\s*/);
+		// Use (?:(?!%%).)* to match any content until %%, allowing single % in the JSON
+		const versionCommentMatch = rawText.match(/^%% versions: (?:(?!%%)[\s\S])*%%\s*/);
 		if (versionCommentMatch) {
 			start += versionCommentMatch[0].length;
 			rawText = rawText.substring(versionCommentMatch[0].length);
@@ -77,8 +77,8 @@ export class SentenceManager {
 
 		const remainingDoc = doc.substring(end);
 		// Allow some whitespace between sentence and comment
-		// Use [^%]* to match content without %, preventing matching across multiple comments
-		const commentMatch = remainingDoc.match(/^\s*%% versions: ([^%]*)%%/);
+		// Use (?:(?!%%).)* to match any content until %%, allowing single % in the JSON
+		const commentMatch = remainingDoc.match(/^\s*%% versions: ((?:(?!%%)[\s\S])*)%%/);
 
 		if (commentMatch) {
 			try {
@@ -154,9 +154,9 @@ export class SentenceManager {
 		// Check if we landed on a version comment and skip over it
 		// We need to check if we're at the end of a version comment pattern: %% versions: ... %%
 		// Look backwards to see if there's a version comment ending here
-		// Use [^%]* to match content without %, preventing matching across multiple comments
+		// Use (?:(?!%%).)* to match any content until %%, allowing single % in the JSON
 		const substringBeforeI = doc.substring(0, i + 1);
-		const versionCommentAtEnd = substringBeforeI.match(/%% versions: [^%]*%%$/);
+		const versionCommentAtEnd = substringBeforeI.match(/%% versions: (?:(?!%%)[\s\S])*%%$/);
 		if (versionCommentAtEnd) {
 			// We're at the end of a version comment, skip back to before it
 			i = i - versionCommentAtEnd[0].length;
