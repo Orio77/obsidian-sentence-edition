@@ -60,6 +60,15 @@ export class SentenceManager {
 			rawText = rawText.substring(leadingSpaceMatch[0].length);
 		}
 
+		// Check if there's a version comment at the start and skip it
+		// This handles the case where the cursor is in a sentence that follows
+		// another sentence with a version comment
+		const versionCommentMatch = rawText.match(/^%% versions: .*? %%\s*/);
+		if (versionCommentMatch) {
+			start += versionCommentMatch[0].length;
+			rawText = rawText.substring(versionCommentMatch[0].length);
+		}
+
 		// Check for versions comment immediately following the sentence
 		// We look ahead from 'end'
 		let versions: string[] = [];
