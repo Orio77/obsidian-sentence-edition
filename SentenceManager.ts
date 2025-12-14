@@ -63,7 +63,8 @@ export class SentenceManager {
 		// Check if there's a version comment at the start and skip it
 		// This handles the case where the cursor is in a sentence that follows
 		// another sentence with a version comment
-		const versionCommentMatch = rawText.match(/^%% versions: .*? %%\s*/);
+		// Use [^%]* to match content without %, preventing matching across multiple comments
+		const versionCommentMatch = rawText.match(/^%% versions: [^%]*%%\s*/);
 		if (versionCommentMatch) {
 			start += versionCommentMatch[0].length;
 			rawText = rawText.substring(versionCommentMatch[0].length);
@@ -76,7 +77,8 @@ export class SentenceManager {
 
 		const remainingDoc = doc.substring(end);
 		// Allow some whitespace between sentence and comment
-		const commentMatch = remainingDoc.match(/^\s*%% versions: (.*?) %%/);
+		// Use [^%]* to match content without %, preventing matching across multiple comments
+		const commentMatch = remainingDoc.match(/^\s*%% versions: ([^%]*)%%/);
 
 		if (commentMatch) {
 			try {
@@ -148,6 +150,20 @@ export class SentenceManager {
 		while (i >= 0 && /\s/.test(doc[i])) i--;
 
 		if (i < 0) return null;
+
+		// Check if we landed on a version comment and skip over it
+		// We need to check if we're at the end of a version comment pattern: %% versions: ... %%
+		// Look backwards to see if there's a version comment ending here
+		// Use [^%]* to match content without %, preventing matching across multiple comments
+		const substringBeforeI = doc.substring(0, i + 1);
+		const versionCommentAtEnd = substringBeforeI.match(/%% versions: [^%]*%%$/);
+		if (versionCommentAtEnd) {
+			// We're at the end of a version comment, skip back to before it
+			i = i - versionCommentAtEnd[0].length;
+			// Skip any whitespace before the comment
+			while (i >= 0 && /\s/.test(doc[i])) i--;
+			if (i < 0) return null;
+		}
 
 		// Now we are at the end of the previous sentence (likely a terminator)
 		// We need to find the start of this sentence.
