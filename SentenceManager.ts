@@ -18,7 +18,7 @@ export class SentenceManager {
 	
 	// Pattern to match version comment content
 	// Uses negative lookahead to match any character until %%, allowing single % in JSON
-	private static VERSION_CONTENT_PATTERN = "(?:(?!%%)[\\\s\\\S])*";
+	private static VERSION_CONTENT_PATTERN = "(?:(?!%%)[\\s\\S])*";
 	
 	// Regex patterns for version comments
 	private static VERSION_COMMENT_START = new RegExp(`^%% versions: ${SentenceManager.VERSION_CONTENT_PATTERN}%%\\s*`);
