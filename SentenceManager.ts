@@ -15,6 +15,15 @@ export class SentenceManager {
 	// Note: This is a naive implementation. It might fail on abbreviations (Mr., Dr., etc.)
 	private static SENTENCE_REGEX = /[^.!?\n]+[.!?]+/g;
 	private static VERSIONS_REGEX = /%% versions: (.*?) %%/;
+	
+	// Pattern to match version comment content
+	// Uses negative lookahead to match any character until %%, allowing single % in JSON
+	private static VERSION_CONTENT_PATTERN = "(?:(?!%%)[\\\s\\\S])*";
+	
+	// Regex patterns for version comments
+	private static VERSION_COMMENT_START = new RegExp(`^%% versions: ${SentenceManager.VERSION_CONTENT_PATTERN}%%\\s*`);
+	private static VERSION_COMMENT_TRAILING = new RegExp(`^\\s*%% versions: (${SentenceManager.VERSION_CONTENT_PATTERN})%%`);
+	private static VERSION_COMMENT_END = new RegExp(`%% versions: ${SentenceManager.VERSION_CONTENT_PATTERN}%%$`);
 
 	/**
 	 * Finds the sentence at the current cursor position.
@@ -63,8 +72,9 @@ export class SentenceManager {
 		// Check if there's a version comment at the start and skip it
 		// This handles the case where the cursor is in a sentence that follows
 		// another sentence with a version comment
-		// Use (?:(?!%%).)* to match any content until %%, allowing single % in the JSON
-		const versionCommentMatch = rawText.match(/^%% versions: (?:(?!%%)[\s\S])*%%\s*/);
+		const versionCommentMatch = rawText.match(
+			SentenceManager.VERSION_COMMENT_START
+		);
 		if (versionCommentMatch) {
 			start += versionCommentMatch[0].length;
 			rawText = rawText.substring(versionCommentMatch[0].length);
@@ -77,8 +87,9 @@ export class SentenceManager {
 
 		const remainingDoc = doc.substring(end);
 		// Allow some whitespace between sentence and comment
-		// Use (?:(?!%%).)* to match any content until %%, allowing single % in the JSON
-		const commentMatch = remainingDoc.match(/^\s*%% versions: ((?:(?!%%)[\s\S])*)%%/);
+		const commentMatch = remainingDoc.match(
+			SentenceManager.VERSION_COMMENT_TRAILING
+		);
 
 		if (commentMatch) {
 			try {
@@ -154,9 +165,10 @@ export class SentenceManager {
 		// Check if we landed on a version comment and skip over it
 		// We need to check if we're at the end of a version comment pattern: %% versions: ... %%
 		// Look backwards to see if there's a version comment ending here
-		// Use (?:(?!%%).)* to match any content until %%, allowing single % in the JSON
 		const substringBeforeI = doc.substring(0, i + 1);
-		const versionCommentAtEnd = substringBeforeI.match(/%% versions: (?:(?!%%)[\s\S])*%%$/);
+		const versionCommentAtEnd = substringBeforeI.match(
+			SentenceManager.VERSION_COMMENT_END
+		);
 		if (versionCommentAtEnd) {
 			// We're at the end of a version comment, skip back to before it
 			i = i - versionCommentAtEnd[0].length;
